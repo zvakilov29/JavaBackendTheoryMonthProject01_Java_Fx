@@ -40,6 +40,25 @@ public class ConsoleUI implements GameUI {
         }
     }
 
+    // ---- NEW methods required by GameUI (console fallback) ----
+
+    @Override
+    public void updatePlayerStatus(String text, double hpPercent) {
+        // Console doesn't need bars; just print the line.
+        // If you want less spam, you can comment this out.
+        println("[HUD] " + text);
+    }
+
+    @Override
+    public void updateEnemyStatus(String text, double hpPercent) {
+        println("[HUD] " + text);
+    }
+
+    @Override
+    public void updatePlayerProgress(String text, double xpPercent, int potions) {
+        println("[HUD] " + text + " | Potions: " + potions);
+    }
+
     // keeping this just in case
     public PlayerClass choosePlayerClass() {
         int idx = chooseOption("Choose your class:", List.of("WARRIOR", "MAGE", "ROGUE"));

@@ -1,18 +1,23 @@
 package rpg.fx;
 
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import rpg.ui.GameUI;
 
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.CountDownLatch;
 
 public class JavaFxUI implements GameUI {
 
@@ -25,11 +30,21 @@ public class JavaFxUI implements GameUI {
     private final TextField inputField;
     private final Button okBtn;
 
-    // NEW: status UI
+    // Status UI (HP)
     private final Label playerStatusLabel;
     private final ProgressBar playerHpBar;
     private final Label enemyStatusLabel;
     private final ProgressBar enemyHpBar;
+
+    // Progress UI (XP + potions)  ✅ NEW
+    private final Label xpLabel;
+    private final ProgressBar xpBar;
+    private final Label potionLabel;
+
+    // Optional screen switching (unused if you switch in FxMain directly)
+    private StackPane rootStack;
+    private Node introScreen;
+    private Node gameScreen;
 
     public JavaFxUI(TextArea logArea,
                     Text promptText,
@@ -40,7 +55,10 @@ public class JavaFxUI implements GameUI {
                     Label playerStatusLabel,
                     ProgressBar playerHpBar,
                     Label enemyStatusLabel,
-                    ProgressBar enemyHpBar) {
+                    ProgressBar enemyHpBar,
+                    Label xpLabel,
+                    ProgressBar xpBar,
+                    Label potionLabel) {
 
         this.logArea = logArea;
         this.promptText = promptText;
@@ -54,6 +72,10 @@ public class JavaFxUI implements GameUI {
         this.playerHpBar = playerHpBar;
         this.enemyStatusLabel = enemyStatusLabel;
         this.enemyHpBar = enemyHpBar;
+
+        this.xpLabel = xpLabel;
+        this.xpBar = xpBar;
+        this.potionLabel = potionLabel;
     }
 
     @Override
@@ -139,7 +161,7 @@ public class JavaFxUI implements GameUI {
     }
 
     // -----------------------------
-    // NEW status updates
+    // HUD updates
     // -----------------------------
     @Override
     public void updatePlayerStatus(String text, double hpPercent) {
@@ -157,9 +179,55 @@ public class JavaFxUI implements GameUI {
         });
     }
 
+    @Override
+    public void updatePlayerProgress(String text, double xpPercent, int potions) {
+        Platform.runLater(() -> {
+            xpLabel.setText(text);
+            xpBar.setProgress(clamp01(xpPercent));
+            potionLabel.setText("Potions: " + potions);
+        });
+    }
+
     private double clamp01(double v) {
         if (v < 0) return 0;
         if (v > 1) return 1;
         return v;
+    }
+
+    // -----------------------------
+    // Optional intro screen helper (keep if you want)
+    // -----------------------------
+    public void showIntroAndWait() {
+        if (rootStack == null) return;
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        Platform.runLater(() -> {
+            rootStack.getChildren().setAll(introScreen);
+
+            FadeTransition ft = new FadeTransition(Duration.millis(900), introScreen);
+            ft.setFromValue(0);
+            ft.setToValue(1);
+            ft.play();
+
+            Button start = (Button) introScreen.lookup("#startBtn");
+            start.setOnAction(e -> {
+                rootStack.getChildren().setAll(gameScreen);
+                latch.countDown();
+            });
+        });
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    // If you later want to use showIntroAndWait, you can add setters:
+    public void setScreens(StackPane rootStack, Node introScreen, Node gameScreen) {
+        this.rootStack = rootStack;
+        this.introScreen = introScreen;
+        this.gameScreen = gameScreen;
     }
 }

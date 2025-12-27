@@ -9,7 +9,8 @@ public interface GameUI {
 
     int chooseOption(String prompt, List<String> options);
 
-    // NEW (optional UI enhancements)
-    default void updatePlayerStatus(String text, double hpPercent) {}
-    default void updateEnemyStatus(String text, double hpPercent) {}
+    // Optional UI enhancements (HUD). ConsoleUI can ignore these.
+    default void updatePlayerStatus(String text, double hpPercent) { }
+    default void updateEnemyStatus(String text, double hpPercent) { }
+    default void updatePlayerProgress(String text, double xpPercent, int potions) { }
 }

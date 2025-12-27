@@ -1,0 +1,185 @@
+/* ---------- GLOBAL TEXT ON DARK UI ---------- */
+.root {
+    -fx-font-family: "Segoe UI";
+    -fx-background-color: #101014; /* make sure root itself is dark */
+}
+
+/* All labels should be readable on dark backgrounds */
+.label {
+    -fx-text-fill: rgba(255,255,255,0.92);
+}
+
+/* Small headings like "PLAYER" / "ENEMY" */
+.hud-title {
+    -fx-text-fill: rgba(255,255,255,0.75);
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 0.5px;
+}
+
+/* The main status lines (Player: ..., Enemy: ...) */
+.hud-value {
+    -fx-text-fill: rgba(255,255,255,0.95);
+    -fx-font-size: 14px;
+}
+
+/* Progress bar track on dark background */
+.progress-bar {
+    -fx-accent: #66ff99;
+}
+.progress-bar .track {
+    -fx-background-color: rgba(255,255,255,0.12);
+    -fx-background-radius: 10;
+}
+.progress-bar .bar {
+    -fx-background-radius: 10;
+}
+
+/* HUD cards */
+.hud-card {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-background-radius: 14;
+    -fx-padding: 12;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-radius: 14;
+}
+
+.root {
+    -fx-font-family: "Segoe UI";
+}
+
+/* ✅ game root background */
+.game-root {
+    -fx-background-color: #101014;
+}
+
+/* TextArea styling */
+.text-area {
+    -fx-control-inner-background: rgba(15,15,18,0.96);
+    -fx-text-fill: white;
+    -fx-highlight-fill: rgba(255,255,255,0.25);
+    -fx-highlight-text-fill: black;
+}
+.text-area .content {
+    -fx-background-color: rgba(15,15,18,0.96);
+}
+
+/* If you're using a custom class too */
+.log-area {
+    -fx-control-inner-background: rgba(15,15,18,0.96);
+    -fx-text-fill: white;
+}
+
+/* Buttons */
+.button {
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-padding: 10 14 10 14;
+    -fx-font-weight: bold;
+    -fx-background-color: rgba(255,255,255,0.12);
+    -fx-border-color: rgba(255,255,255,0.25);
+    -fx-border-width: 1;
+    -fx-text-fill: white;
+}
+.button:hover {
+    -fx-background-color: rgba(255,255,255,0.18);
+}
+
+/* Progress bar */
+.progress-bar {
+    -fx-accent: #66ff99;
+}
+
+/* HUD cards (player/enemy boxes) */
+.hud-card {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-background-radius: 14;
+    -fx-padding: 12;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-radius: 14;
+}
+
+/* Prompt text (Text node) */
+.prompt-text {
+    -fx-fill: white;
+    -fx-font-size: 14px;
+}
+
+/* Bottom panel behind prompt/input/buttons */
+.bottom-panel {
+    -fx-background-color: rgba(15,15,18,0.92);
+    -fx-background-radius: 14;
+    -fx-padding: 12;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-radius: 14;
+}
+
+/* Input row container */
+.input-row {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-background-radius: 12;
+    -fx-padding: 10;
+    -fx-border-color: rgba(255,255,255,0.18);
+    -fx-border-radius: 12;
+}
+
+/* ✅ TextField styling */
+.text-field {
+    -fx-background-color: rgba(0,0,0,0.55);
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255,255,255,0.55);
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(255,255,255,0.18);
+    -fx-border-radius: 10;
+    -fx-padding: 10 12 10 12;
+}
+
+/* Start button special look */
+.start-button {
+    -fx-background-color: rgba(255,255,255,0.18);
+    -fx-border-color: rgba(255,255,255,0.28);
+}
+.start-button:hover {
+    -fx-background-color: rgba(255,255,255,0.26);
+}
+
+.game-root {
+    -fx-background-color: linear-gradient(#121218, #0b0b0f);
+}
+
+.top-hud {
+    -fx-background-color: rgba(0,0,0,0.18);
+    -fx-padding: 12;
+}
+
+.actions-box .button {
+    -fx-font-size: 14px;
+    -fx-padding: 12 16 12 16;
+    -fx-background-color: rgba(255,255,255,0.10);
+    -fx-border-color: rgba(255,255,255,0.18);
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-min-height: 42px;
+}
+
+.actions-box .button:hover {
+    -fx-background-color: rgba(255,255,255,0.18);
+    -fx-border-color: rgba(255,255,255,0.28);
+}
+
+.actions-box .button:pressed {
+    -fx-background-color: rgba(255,255,255,0.22);
+}
+
+.hud-card {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 18, 0.25, 0, 6);
+}
+
+.log-area {
+    -fx-background-insets: 0;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: rgba(255,255,255,0.10);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.55), 16, 0.22, 0, 6);
+}

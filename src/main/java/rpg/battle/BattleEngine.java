@@ -4,14 +4,13 @@ import rpg.battle.actions.AttackAction;
 import rpg.battle.actions.DefendAction;
 import rpg.battle.actions.PotionAction;
 import rpg.battle.actions.RunAction;
+import rpg.battle.actions.SpecialAction;
 import rpg.items.ItemType;
 import rpg.model.Enemy;
 import rpg.model.Player;
 import rpg.ui.GameUI;
-import rpg.battle.actions.SpecialAction;
 
 import java.util.List;
-
 
 public class BattleEngine {
     private final GameUI ui;
@@ -28,7 +27,7 @@ public class BattleEngine {
                 new DefendAction(),
                 new PotionAction(ItemType.HEALING_POTION),
                 new SpecialAction(),
-                new RunAction(35) // base escape chance (I'll connect difficulty later)
+                new RunAction(35)
         );
 
         ui.println("\n=== BATTLE START ===");
@@ -41,15 +40,8 @@ public class BattleEngine {
                     player.getHp() + "/" + player.getMaxHp());
             ui.println(enemy.getName() + " HP: " + enemy.getHp() + "/" + enemy.getMaxHp());
 
-            ui.updatePlayerStatus(
-                    player.getName() + " (Lv " + player.getLevel() + ") HP: " + player.getHp() + "/" + player.getMaxHp(),
-                    (double) player.getHp() / player.getMaxHp()
-            );
-
-            ui.updateEnemyStatus(
-                    enemy.getName() + " HP: " + enemy.getHp() + "/" + enemy.getMaxHp(),
-                    (double) enemy.getHp() / enemy.getMaxHp()
-            );
+            // Refresh JavaFX HUD (HP + XP + potions)
+            refreshHud(player, enemy);
 
             // --------------------
             // Player turn
@@ -60,6 +52,9 @@ public class BattleEngine {
 
             int choice = ui.chooseOption("Your turn:", labels);
             actions.get(choice).execute(ctx);
+
+            // Refresh after action (potion use, etc.)
+            refreshHud(player, enemy);
 
             // If enemy died due to the player's action, end as WIN
             if (enemy.isDefeated()) {
@@ -87,16 +82,20 @@ public class BattleEngine {
             player.takeDamage(finalDmg);
             ui.println(enemy.getName() + " hits you for " + finalDmg + " damage.");
 
+            // Refresh after enemy hit
+            refreshHud(player, enemy);
+
             // If player died after enemy hit, end as LOSE
             if (player.isDefeated()) {
                 ctx.end(BattleOutcome.LOSE);
                 break;
             }
+
             player.tickCooldowns();
         }
 
         // --------------------
-        // Battle result (based on outcome)
+        // Battle result
         // --------------------
         ui.println("\n=== BATTLE END ===");
         BattleOutcome outcome = ctx.getOutcome();
@@ -107,6 +106,9 @@ public class BattleEngine {
 
             int oldLevel = player.getLevel();
             player.gainXp(reward);
+
+            // Refresh to reflect new XP / new level
+            refreshHud(player, enemy);
 
             ui.println("Your XP: " + player.getXp() + "/" + player.xpToNextLevel());
             if (player.getLevel() > oldLevel) {
@@ -121,7 +123,29 @@ public class BattleEngine {
             ui.println("You lost...");
         }
 
-
         return outcome;
+    }
+
+    private void refreshHud(Player player, Enemy enemy) {
+        ui.updatePlayerStatus(
+                player.getName() + " (Lv " + player.getLevel() + ") HP: " + player.getHp() + "/" + player.getMaxHp(),
+                (double) player.getHp() / player.getMaxHp()
+        );
+
+        ui.updateEnemyStatus(
+                enemy.getName() + " HP: " + enemy.getHp() + "/" + enemy.getMaxHp(),
+                (double) enemy.getHp() / enemy.getMaxHp()
+        );
+
+        int xpNeed = player.xpToNextLevel();
+        double xpPercent = xpNeed <= 0 ? 0 : (double) player.getXp() / xpNeed;
+
+        int potions = player.getInventory().getCount(ItemType.HEALING_POTION);
+
+        ui.updatePlayerProgress(
+                "XP: " + player.getXp() + "/" + xpNeed,
+                xpPercent,
+                potions
+        );
     }
 }
