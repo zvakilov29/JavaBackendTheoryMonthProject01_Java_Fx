@@ -1,76 +1,79 @@
-/* ---------- GLOBAL TEXT ON DARK UI ---------- */
 .root {
     -fx-font-family: "Segoe UI";
-    -fx-background-color: #101014; /* make sure root itself is dark */
+    -fx-background-color: #101014;
 }
 
-/* All labels should be readable on dark backgrounds */
-.label {
-    -fx-text-fill: rgba(255,255,255,0.92);
+.label { -fx-text-fill: rgba(255,255,255,0.92); }
+.text  { -fx-fill: rgba(255,255,255,0.92); }
+
+.game-root {
+    -fx-background-color: linear-gradient(#14141b, #0d0d12);
 }
 
-/* Small headings like "PLAYER" / "ENEMY" */
+.top-hud {
+    -fx-background-color: rgba(0,0,0,0.18);
+    -fx-padding: 12;
+}
+
+.hud-card {
+    -fx-background-color: rgba(255,255,255,0.07);
+    -fx-background-radius: 14;
+    -fx-padding: 12;
+    -fx-border-color: rgba(255,255,255,0.12);
+    -fx-border-radius: 14;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.55), 16, 0.20, 0, 6);
+}
+
 .hud-title {
-    -fx-text-fill: rgba(255,255,255,0.75);
+    -fx-text-fill: rgba(255,255,255,0.70);
     -fx-font-size: 12px;
     -fx-font-weight: bold;
-    -fx-letter-spacing: 0.5px;
 }
 
-/* The main status lines (Player: ..., Enemy: ...) */
 .hud-value {
     -fx-text-fill: rgba(255,255,255,0.95);
     -fx-font-size: 14px;
 }
 
-/* Progress bar track on dark background */
-.progress-bar {
-    -fx-accent: #66ff99;
-}
+.progress-bar { -fx-accent: #66ff99; }
 .progress-bar .track {
     -fx-background-color: rgba(255,255,255,0.12);
     -fx-background-radius: 10;
 }
-.progress-bar .bar {
-    -fx-background-radius: 10;
-}
+.progress-bar .bar { -fx-background-radius: 10; }
 
-/* HUD cards */
-.hud-card {
-    -fx-background-color: rgba(255,255,255,0.06);
+.bottom-panel {
+    -fx-background-color: rgba(15,15,18,0.88);
     -fx-background-radius: 14;
     -fx-padding: 12;
     -fx-border-color: rgba(255,255,255,0.12);
     -fx-border-radius: 14;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.45), 14, 0.18, 0, 5);
 }
 
-.root {
-    -fx-font-family: "Segoe UI";
+.prompt-text {
+    -fx-fill: rgba(255,255,255,0.92);
+    -fx-font-size: 14px;
 }
 
-/* ✅ game root background */
-.game-root {
-    -fx-background-color: #101014;
+.input-row {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-background-radius: 12;
+    -fx-padding: 10;
+    -fx-border-color: rgba(255,255,255,0.18);
+    -fx-border-radius: 12;
 }
 
-/* TextArea styling */
-.text-area {
-    -fx-control-inner-background: rgba(15,15,18,0.96);
+.text-field {
+    -fx-background-color: rgba(0,0,0,0.55);
     -fx-text-fill: white;
-    -fx-highlight-fill: rgba(255,255,255,0.25);
-    -fx-highlight-text-fill: black;
-}
-.text-area .content {
-    -fx-background-color: rgba(15,15,18,0.96);
-}
-
-/* If you're using a custom class too */
-.log-area {
-    -fx-control-inner-background: rgba(15,15,18,0.96);
-    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255,255,255,0.55);
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(255,255,255,0.18);
+    -fx-border-radius: 10;
+    -fx-padding: 10 12 10 12;
 }
 
-/* Buttons */
 .button {
     -fx-background-radius: 12;
     -fx-border-radius: 12;
@@ -83,103 +86,91 @@
 }
 .button:hover {
     -fx-background-color: rgba(255,255,255,0.18);
+    -fx-border-color: rgba(255,255,255,0.30);
 }
-
-/* Progress bar */
-.progress-bar {
-    -fx-accent: #66ff99;
-}
-
-/* HUD cards (player/enemy boxes) */
-.hud-card {
-    -fx-background-color: rgba(255,255,255,0.06);
-    -fx-background-radius: 14;
-    -fx-padding: 12;
-    -fx-border-color: rgba(255,255,255,0.12);
-    -fx-border-radius: 14;
-}
-
-/* Prompt text (Text node) */
-.prompt-text {
-    -fx-fill: white;
-    -fx-font-size: 14px;
-}
-
-/* Bottom panel behind prompt/input/buttons */
-.bottom-panel {
-    -fx-background-color: rgba(15,15,18,0.92);
-    -fx-background-radius: 14;
-    -fx-padding: 12;
-    -fx-border-color: rgba(255,255,255,0.12);
-    -fx-border-radius: 14;
-}
-
-/* Input row container */
-.input-row {
-    -fx-background-color: rgba(255,255,255,0.08);
-    -fx-background-radius: 12;
-    -fx-padding: 10;
-    -fx-border-color: rgba(255,255,255,0.18);
-    -fx-border-radius: 12;
-}
-
-/* ✅ TextField styling */
-.text-field {
-    -fx-background-color: rgba(0,0,0,0.55);
-    -fx-text-fill: white;
-    -fx-prompt-text-fill: rgba(255,255,255,0.55);
-    -fx-background-radius: 10;
-    -fx-border-color: rgba(255,255,255,0.18);
-    -fx-border-radius: 10;
-    -fx-padding: 10 12 10 12;
-}
-
-/* Start button special look */
-.start-button {
-    -fx-background-color: rgba(255,255,255,0.18);
-    -fx-border-color: rgba(255,255,255,0.28);
-}
-.start-button:hover {
-    -fx-background-color: rgba(255,255,255,0.26);
-}
-
-.game-root {
-    -fx-background-color: linear-gradient(#121218, #0b0b0f);
-}
-
-.top-hud {
-    -fx-background-color: rgba(0,0,0,0.18);
-    -fx-padding: 12;
-}
+.button:pressed { -fx-background-color: rgba(255,255,255,0.22); }
 
 .actions-box .button {
     -fx-font-size: 14px;
     -fx-padding: 12 16 12 16;
-    -fx-background-color: rgba(255,255,255,0.10);
-    -fx-border-color: rgba(255,255,255,0.18);
-    -fx-border-radius: 14;
-    -fx-background-radius: 14;
     -fx-min-height: 42px;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
 }
 
-.actions-box .button:hover {
+.start-button {
     -fx-background-color: rgba(255,255,255,0.18);
-    -fx-border-color: rgba(255,255,255,0.28);
+    -fx-border-color: rgba(255,255,255,0.32);
+    -fx-font-size: 14px;
+    -fx-padding: 12 18 12 18;
 }
+.start-button:hover { -fx-background-color: rgba(255,255,255,0.26); }
 
-.actions-box .button:pressed {
-    -fx-background-color: rgba(255,255,255,0.22);
-}
-
-.hud-card {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 18, 0.25, 0, 6);
-}
-
-.log-area {
-    -fx-background-insets: 0;
+/* =========================
+   COMBAT FEED (ListView)
+   ========================= */
+.list-view.combat-feed {
+    -fx-background-color: rgba(15,15,18,0.96);
     -fx-background-radius: 14;
     -fx-border-radius: 14;
     -fx-border-color: rgba(255,255,255,0.10);
     -fx-border-width: 1;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.55), 16, 0.22, 0, 6);
+    -fx-padding: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.55), 16, 0.18, 0, 6);
 }
+
+.list-view.combat-feed .viewport,
+.list-view.combat-feed .virtual-flow {
+    -fx-background-color: transparent;
+}
+
+.list-view.combat-feed .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 8 12 8 12;
+}
+
+.list-view.combat-feed .list-cell:hover {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-background-radius: 10;
+}
+
+.list-view.combat-feed .list-cell:filled:selected,
+.list-view.combat-feed .list-cell:filled:selected:focused {
+    -fx-background-color: rgba(255,255,255,0.12);
+}
+
+/* Tag pill + message text inside each cell */
+.feed-tag {
+    -fx-min-width: 48px;
+    -fx-alignment: center;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+    -fx-padding: 3 8 3 8;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-text-fill: white;
+    -fx-border-color: rgba(255,255,255,0.20);
+    -fx-border-width: 1;
+    -fx-opacity: 0.92;
+}
+
+.feed-text {
+    -fx-font-size: 13px;
+    -fx-text-fill: rgba(255,255,255,0.92);
+}
+
+/* Color themes per kind */
+.list-cell.feed-dmg .feed-tag  { -fx-background-color: rgba(255, 70, 70, 0.35); }
+.list-cell.feed-dmg .feed-text { -fx-text-fill: rgba(255, 170, 170, 0.98); }
+
+.list-cell.feed-heal .feed-tag  { -fx-background-color: rgba(80, 220, 140, 0.30); }
+.list-cell.feed-heal .feed-text { -fx-text-fill: rgba(180, 255, 210, 0.98); }
+
+.list-cell.feed-xp .feed-tag  { -fx-background-color: rgba(255, 200, 60, 0.28); }
+.list-cell.feed-xp .feed-text { -fx-text-fill: rgba(255, 235, 170, 0.98); }
+
+.list-cell.feed-system .feed-tag  { -fx-background-color: rgba(120, 170, 255, 0.25); }
+.list-cell.feed-system .feed-text { -fx-text-fill: rgba(200, 220, 255, 0.98); }
+
+.list-cell.feed-info .feed-tag  { -fx-background-color: rgba(255,255,255,0.12); }
+.list-cell.feed-info .feed-text { -fx-text-fill: rgba(255,255,255,0.92); }

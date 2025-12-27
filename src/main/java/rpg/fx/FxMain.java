@@ -9,10 +9,20 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -27,25 +37,29 @@ public class FxMain extends Application {
     public void start(Stage stage) {
 
         // =============================
-        // GAME SCREEN (HUD + log + actions)
+        // GAME SCREEN (HUD + feed + actions)
         // =============================
-
-        // Player HUD
-        Label playerStatus = new Label("Player: -");
-        ProgressBar playerHpBar = new ProgressBar(0);
-        playerHpBar.setMaxWidth(Double.MAX_VALUE);
-
-        Label xpLabel = new Label("XP: -");
-        ProgressBar xpBar = new ProgressBar(0);
-        xpBar.setMaxWidth(Double.MAX_VALUE);
-
-        Label potionLabel = new Label("Potions: 0");
 
         Label playerTitle = new Label("PLAYER");
         playerTitle.getStyleClass().add("hud-title");
 
+        Label enemyTitle = new Label("ENEMY");
+        enemyTitle.getStyleClass().add("hud-title");
+
+        // Player HUD
+        Label playerStatus = new Label("Player: -");
         playerStatus.getStyleClass().add("hud-value");
+
+        ProgressBar playerHpBar = new ProgressBar(0);
+        playerHpBar.setMaxWidth(Double.MAX_VALUE);
+
+        Label xpLabel = new Label("XP: -");
         xpLabel.getStyleClass().add("hud-value");
+
+        ProgressBar xpBar = new ProgressBar(0);
+        xpBar.setMaxWidth(Double.MAX_VALUE);
+
+        Label potionLabel = new Label("Potions: 0");
         potionLabel.getStyleClass().add("hud-value");
 
         VBox playerBox = new VBox(6,
@@ -56,47 +70,45 @@ public class FxMain extends Application {
                 xpBar,
                 potionLabel
         );
-
         playerBox.getStyleClass().add("hud-card");
 
         // Enemy HUD
         Label enemyStatus = new Label("Enemy: -");
+        enemyStatus.getStyleClass().add("hud-value");
+
         ProgressBar enemyHpBar = new ProgressBar(0);
         enemyHpBar.setMaxWidth(Double.MAX_VALUE);
-
-        Label enemyTitle = new Label("ENEMY");
-        enemyTitle.getStyleClass().add("hud-title");
-
-        enemyStatus.getStyleClass().add("hud-value");
 
         VBox enemyBox = new VBox(6,
                 enemyTitle,
                 enemyStatus,
                 enemyHpBar
         );
-
         enemyBox.getStyleClass().add("hud-card");
 
         HBox topStatus = new HBox(20, playerBox, enemyBox);
         topStatus.setPadding(new Insets(12));
+        topStatus.getStyleClass().add("top-hud");
+
         HBox.setHgrow(playerBox, Priority.ALWAYS);
         HBox.setHgrow(enemyBox, Priority.ALWAYS);
         playerBox.setMaxWidth(Double.MAX_VALUE);
         enemyBox.setMaxWidth(Double.MAX_VALUE);
 
-        // Log area
-        TextArea log = new TextArea();
-        log.setEditable(false);
-        log.setWrapText(true);
-        log.getStyleClass().add("log-area");
+        // ✅ Combat feed with custom cell renderer
+        ListView<FeedItem> feed = new ListView<>();
+        feed.getStyleClass().add("combat-feed");
+        feed.setCellFactory(lv -> new FeedCell());
 
         // Prompt + actions
         Text prompt = new Text("Ready.");
         prompt.getStyleClass().add("prompt-text");
 
         VBox buttons = new VBox(8);
+        buttons.getStyleClass().add("actions-box");
+        buttons.setFillWidth(true);
 
-        // Inline input row (same window)
+        // Inline input row
         TextField inputField = new TextField();
         inputField.setPromptText("Type here...");
 
@@ -106,8 +118,6 @@ public class FxMain extends Application {
         HBox inputRow = new HBox(8, inputField, okBtn);
         inputRow.setAlignment(Pos.CENTER_LEFT);
         inputRow.getStyleClass().add("input-row");
-
-        // hidden by default
         inputRow.setVisible(false);
         inputRow.setManaged(false);
 
@@ -117,18 +127,12 @@ public class FxMain extends Application {
 
         BorderPane gameRoot = new BorderPane();
         gameRoot.getStyleClass().add("game-root");
-        topStatus.getStyleClass().add("top-hud");
-        bottom.getStyleClass().add("bottom-panel");
         gameRoot.setTop(topStatus);
-        gameRoot.setCenter(log);
+        gameRoot.setCenter(feed);
         gameRoot.setBottom(bottom);
-        gameRoot.getStyleClass().add("game-root"); // ✅ this makes .game-root work
-        inputRow.getStyleClass().add("input-row");
 
-
-        // JavaFX UI adapter (must match your JavaFxUI constructor)
         JavaFxUI ui = new JavaFxUI(
-                log, prompt, buttons,
+                feed, prompt, buttons,
                 inputRow, inputField, okBtn,
                 playerStatus, playerHpBar,
                 enemyStatus, enemyHpBar,
@@ -136,9 +140,8 @@ public class FxMain extends Application {
         );
 
         // =============================
-        // INTRO SCREEN (RPG themed)
+        // INTRO SCREEN
         // =============================
-
         ImageView bg = tryLoadImageView("/images/rpg_bg.jpg");
         if (bg != null) {
             bg.setPreserveRatio(false);
@@ -167,7 +170,6 @@ public class FxMain extends Application {
         startBtn.setPrefWidth(240);
         startBtn.setPrefHeight(44);
         startBtn.getStyleClass().add("start-button");
-        buttons.setFillWidth(true);
 
         VBox introBox = (logo != null)
                 ? new VBox(16, logo, title, subtitle, startBtn)
@@ -178,43 +180,29 @@ public class FxMain extends Application {
         introBox.setTranslateY(22);
 
         StackPane introRoot = new StackPane();
-        if (bg != null) {
-            introRoot.getChildren().add(bg);
-        } else {
-            introRoot.setStyle("-fx-background-color: linear-gradient(#1f1f1f, #0f0f0f);");
-        }
+        if (bg != null) introRoot.getChildren().add(bg);
+        else introRoot.setStyle("-fx-background-color: linear-gradient(#1f1f1f, #0f0f0f);");
         introRoot.getChildren().addAll(overlay, introBox);
 
-        // =============================
-        // ROOT STACK (swap intro <-> game)
-        // =============================
         StackPane rootStack = new StackPane(introRoot);
         Scene scene = new Scene(rootStack, 900, 650);
 
-        // attach CSS safely
         safeAddStylesheet(scene, "/styles/app.css");
 
         stage.setTitle("RPG Battle - JavaFX");
         stage.setScene(scene);
         stage.show();
 
-        // =============================
-        // Intro animation
-        // =============================
         FadeTransition fade = new FadeTransition(Duration.millis(900), introBox);
         fade.setFromValue(0);
         fade.setToValue(1);
         fade.play();
 
         Timeline slide = new Timeline(
-                new KeyFrame(Duration.millis(900),
-                        new KeyValue(introBox.translateYProperty(), 0))
+                new KeyFrame(Duration.millis(900), new KeyValue(introBox.translateYProperty(), 0))
         );
         slide.play();
 
-        // =============================
-        // Wait for Start -> switch -> run game
-        // =============================
         CountDownLatch startLatch = new CountDownLatch(1);
         startBtn.setOnAction(e -> startLatch.countDown());
 
@@ -227,27 +215,72 @@ public class FxMain extends Application {
             }
 
             Platform.runLater(() -> rootStack.getChildren().setAll(gameRoot));
-
-            // Run your existing flow (menus, saves, battles, encounters)
             FxRunner.run(ui);
 
         }, "game-thread").start();
+    }
+
+    // Custom cell: tag + colored text
+    private static class FeedCell extends ListCell<FeedItem> {
+        private final Label tag = new Label();
+        private final Label msg = new Label();
+        private final HBox row = new HBox(10, tag, msg);
+
+        FeedCell() {
+            row.setAlignment(Pos.CENTER_LEFT);
+            tag.getStyleClass().add("feed-tag");
+            msg.getStyleClass().add("feed-text");
+            setGraphic(row);
+        }
+
+        @Override
+        protected void updateItem(FeedItem item, boolean empty) {
+            super.updateItem(item, empty);
+
+            if (empty || item == null) {
+                setText(null);
+                setGraphic(null);
+                getStyleClass().removeAll("feed-dmg", "feed-heal", "feed-xp", "feed-system", "feed-info");
+                return;
+            }
+
+            setGraphic(row);
+            msg.setText(item.getText());
+
+            // tag text
+            String t = switch (item.getKind()) {
+                case DMG -> "DMG";
+                case HEAL -> "HEAL";
+                case XP -> "XP";
+                case SYSTEM -> "SYS";
+                default -> "INFO";
+            };
+            tag.setText(t);
+
+            // apply a style class to the cell
+            getStyleClass().removeAll("feed-dmg", "feed-heal", "feed-xp", "feed-system", "feed-info");
+            switch (item.getKind()) {
+                case DMG -> getStyleClass().add("feed-dmg");
+                case HEAL -> getStyleClass().add("feed-heal");
+                case XP -> getStyleClass().add("feed-xp");
+                case SYSTEM -> getStyleClass().add("feed-system");
+                default -> getStyleClass().add("feed-info");
+            }
+        }
     }
 
     private void safeAddStylesheet(Scene scene, String resourcePath) {
         try {
             URL url = getClass().getResource(resourcePath);
             if (url != null) scene.getStylesheets().add(url.toExternalForm());
-        } catch (Exception ignored) {
-        }
+        } catch (Exception ignored) { }
     }
 
     private ImageView tryLoadImageView(String resourcePath) {
         try {
             var stream = getClass().getResourceAsStream(resourcePath);
             if (stream == null) return null;
-            Image img = new Image(stream);
-            return new ImageView(img);
+            return new ImageView(new Image(stream));
         } catch (Exception e) {
             return null;
         }

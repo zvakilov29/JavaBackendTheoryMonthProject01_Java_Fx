@@ -1,52 +1,39 @@
 package rpg.fx;
 
-import javafx.animation.FadeTransition;
 import javafx.application.Platform;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 import rpg.ui.GameUI;
 
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.CountDownLatch;
 
 public class JavaFxUI implements GameUI {
 
-    private final TextArea logArea;
+    private final ListView<FeedItem> feed;
     private final Text promptText;
     private final VBox buttonsBox;
 
-    // Inline input controls (inside the same window)
     private final HBox inputRow;
     private final TextField inputField;
     private final Button okBtn;
 
-    // Status UI (HP)
     private final Label playerStatusLabel;
     private final ProgressBar playerHpBar;
     private final Label enemyStatusLabel;
     private final ProgressBar enemyHpBar;
 
-    // Progress UI (XP + potions)  ✅ NEW
     private final Label xpLabel;
     private final ProgressBar xpBar;
     private final Label potionLabel;
 
-    // Optional screen switching (unused if you switch in FxMain directly)
-    private StackPane rootStack;
-    private Node introScreen;
-    private Node gameScreen;
-
-    public JavaFxUI(TextArea logArea,
+    public JavaFxUI(ListView<FeedItem> feed,
                     Text promptText,
                     VBox buttonsBox,
                     HBox inputRow,
@@ -60,7 +47,7 @@ public class JavaFxUI implements GameUI {
                     ProgressBar xpBar,
                     Label potionLabel) {
 
-        this.logArea = logArea;
+        this.feed = feed;
         this.promptText = promptText;
         this.buttonsBox = buttonsBox;
 
@@ -80,7 +67,11 @@ public class JavaFxUI implements GameUI {
 
     @Override
     public void println(String s) {
-        Platform.runLater(() -> logArea.appendText(s + "\n"));
+        FeedItem item = FeedItem.fromLine(s);
+        Platform.runLater(() -> {
+            feed.getItems().add(item);
+            feed.scrollTo(feed.getItems().size() - 1);
+        });
     }
 
     @Override
@@ -98,27 +89,20 @@ public class JavaFxUI implements GameUI {
         Platform.runLater(() -> {
             promptText.setText(prompt);
 
-            // When asking text: remove option buttons
             buttonsBox.getChildren().clear();
 
-            // Show input row
             inputField.clear();
             inputRow.setVisible(true);
             inputRow.setManaged(true);
             inputField.requestFocus();
 
-            // OK submits
             okBtn.setOnAction(e -> {
                 String text = inputField.getText();
-
-                // Hide input row after submit
                 inputRow.setVisible(false);
                 inputRow.setManaged(false);
-
                 q.offer(text);
             });
 
-            // Enter key submits too
             inputField.setOnAction(e -> okBtn.fire());
         });
 
@@ -137,7 +121,6 @@ public class JavaFxUI implements GameUI {
         Platform.runLater(() -> {
             promptText.setText(prompt);
 
-            // When choosing options: hide input row
             inputRow.setVisible(false);
             inputRow.setManaged(false);
 
@@ -160,9 +143,6 @@ public class JavaFxUI implements GameUI {
         }
     }
 
-    // -----------------------------
-    // HUD updates
-    // -----------------------------
     @Override
     public void updatePlayerStatus(String text, double hpPercent) {
         Platform.runLater(() -> {
@@ -192,42 +172,5 @@ public class JavaFxUI implements GameUI {
         if (v < 0) return 0;
         if (v > 1) return 1;
         return v;
-    }
-
-    // -----------------------------
-    // Optional intro screen helper (keep if you want)
-    // -----------------------------
-    public void showIntroAndWait() {
-        if (rootStack == null) return;
-
-        CountDownLatch latch = new CountDownLatch(1);
-
-        Platform.runLater(() -> {
-            rootStack.getChildren().setAll(introScreen);
-
-            FadeTransition ft = new FadeTransition(Duration.millis(900), introScreen);
-            ft.setFromValue(0);
-            ft.setToValue(1);
-            ft.play();
-
-            Button start = (Button) introScreen.lookup("#startBtn");
-            start.setOnAction(e -> {
-                rootStack.getChildren().setAll(gameScreen);
-                latch.countDown();
-            });
-        });
-
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    // If you later want to use showIntroAndWait, you can add setters:
-    public void setScreens(StackPane rootStack, Node introScreen, Node gameScreen) {
-        this.rootStack = rootStack;
-        this.introScreen = introScreen;
-        this.gameScreen = gameScreen;
     }
 }

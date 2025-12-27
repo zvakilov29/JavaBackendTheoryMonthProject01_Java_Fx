@@ -33,33 +33,14 @@ public class ConsoleUI implements GameUI {
             try {
                 int v = Integer.parseInt(sc.nextLine().trim());
                 if (v < 1 || v > options.size()) throw new IllegalArgumentException();
-                return v - 1; // 0-based index
+                return v - 1;
             } catch (Exception e) {
                 println("Enter a number between 1 and " + options.size() + ":");
             }
         }
     }
 
-    // ---- NEW methods required by GameUI (console fallback) ----
-
-    @Override
-    public void updatePlayerStatus(String text, double hpPercent) {
-        // Console doesn't need bars; just print the line.
-        // If you want less spam, you can comment this out.
-        println("[HUD] " + text);
-    }
-
-    @Override
-    public void updateEnemyStatus(String text, double hpPercent) {
-        println("[HUD] " + text);
-    }
-
-    @Override
-    public void updatePlayerProgress(String text, double xpPercent, int potions) {
-        println("[HUD] " + text + " | Potions: " + potions);
-    }
-
-    // keeping this just in case
+    // Optional helper you had
     public PlayerClass choosePlayerClass() {
         int idx = chooseOption("Choose your class:", List.of("WARRIOR", "MAGE", "ROGUE"));
         return switch (idx) {
@@ -68,4 +49,9 @@ public class ConsoleUI implements GameUI {
             default -> PlayerClass.ROGUE;
         };
     }
+
+    // HUD updates are irrelevant for console -> no-op
+    @Override public void updatePlayerStatus(String text, double hpPercent) { }
+    @Override public void updateEnemyStatus(String text, double hpPercent) { }
+    @Override public void updatePlayerProgress(String text, double xpPercent, int potions) { }
 }
